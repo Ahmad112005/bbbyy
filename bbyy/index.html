@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Surat Maaf Bucin</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #f8e1f4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .envelope {
+            position: relative;
+            width: 350px;
+            height: 230px;
+            background-color: #ff9ec6;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.5s ease;
+            z-index: 2;
+            margin-bottom: 30px;
+        }
+        
+        .envelope:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
+            border-top: 115px solid #ff7eb8;
+            transform-origin: top;
+            transform: rotateX(0deg);
+            transition: all 0.5s ease;
+            z-index: 3;
+        }
+        
+        .envelope.open {
+            transform: translateY(-120px);
+        }
+        
+        .envelope.open:before {
+            transform: rotateX(180deg);
+        }
+        
+        .envelope:after {
+            content: '📩 Klik aku sayang!';
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .letter {
+            position: absolute;
+            width: 320px;
+            height: 420px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-sizing: border-box;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+            z-index: 1;
+            overflow: hidden;
+            opacity: 0;
+        }
+        
+        .letter.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            z-index: 4;
+        }
+        
+        .page {
+            position: absolute;
+            width: calc(100% - 40px);
+            height: calc(100% - 40px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.5s ease;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        
+        .page.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .page-photo {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 5px solid #ff9ec6;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        .page-text {
+            color: #555;
+            font-size: 17px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            width: 100%;
+            padding: 0 10px;
+            text-align: justify;
+            text-align-last: center;
+        }
+        
+        h1 {
+            color: #ff5e9a;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        
+        .hearts {
+            text-align: center;
+            font-size: 28px;
+            color: #ff5e9a;
+            margin: 20px 0;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        .signature {
+            font-style: italic;
+            text-align: right;
+            margin-top: 25px;
+            color: #ff5e9a;
+            font-weight: bold;
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: calc(100% - 40px);
+            margin-top: 20px;
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        
+        .nav-btn {
+            background-color: #ff9ec6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .nav-btn:hover {
+            background-color: #ff5e9a;
+            transform: scale(1.05);
+        }
+        
+        .nav-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #ff5e9a;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        .music-control {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #ff9ec6;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .music-control.active {
+            opacity: 1;
+        }
+        
+        .music-control i {
+            font-size: 22px;
+        }
+        
+        .love {
+            position: absolute;
+            pointer-events: none;
+            animation: float 4s ease-in-out infinite;
+            font-size: 20px;
+            color: #ff5e9a;
+            z-index: 100;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="envelope" id="envelope"></div>
+        
+        <div class="letter" id="letter">
+            <!-- Halaman judul -->
+            <div class="page" id="page-0">
+                <h1>Maafin Aku, Sayangku~</h1>
+                <img src="img/foto1.jpg" alt="Foto Kita" class="page-photo">
+                <div class="hearts">♥ ♥ ♥</div>
+            </div>
+            
+            <!-- Halaman-halaman konten -->
+            <div class="page" id="page-1">
+                <img src="img/foto2.jpg" alt="Foto Kita" class="page-photo">
+                <div class="page-text">Haii kamu yang bikin hari-hariku berwarna 🌈 Aku mau ngucapin sesuatu yang penting nih...</div>
+            </div>
+            
+            <div class="page" id="page-2">
+                <img src="img/foto3.jpg" alt="Foto Kita" class="page-photo">
+                <div class="page-text">Aku mau minta maaf kalau tadi aku kayak kucing kesetrum ⚡ Aku nggak sengaja bikin kamu kesel.</div>
+            </div>
+            
+            <div class="page" id="page-3">
+                <img src="img/foto4.jpg" alt="Foto Kita" class="page-photo">
+                <div class="page-text">Kamu tahu kan, kadang otakku suka error kaya WiFi lemot... Tapi percayalah, niatku selalu baik.</div>
+            </div>
+            
+            <div class="page" id="page-4">
+                <img src="img/foto5.jpg" alt="Foto Kita" class="page-photo">
+                <div class="page-text">Tapi hatiku selalu full signal buat kamu 💖 Nggak ada yang bisa ngeganggu frekuensi cintaku ke kamu.</div>
+                <div class="hearts">♥ ♥ ♥</div>
+            </div>
+            
+            <div class="page" id="page-5">
+                <img src="img/foto6.jpg" alt="Foto Kita" class="page-photo">
+                <div class="page-text">Kamu tuh kayak stiker favorit di WA aku. Setiap liat kamu, langsung pengen save terus di hati.</div>
+            </div>
+            
+            <div class="page" id="page-6">
+                <img src="img/foto7.jpg" alt="Foto Kita" class="page-photo">
+                <div class="page-text">Selalu bikin chat kita special dan pengen aku koleksi terus 🥰 Kayak chat pertama kita yang sampai sekarang masih aku screenshot.</div>
+            </div>
+            
+            <div class="page" id="page-7">
+                <img src="img/foto8.jpg" alt="Foto Kita" class="page-photo">
+                <div class="page-text">Aku janji bakal lebih perhatian, nggak kayak baterai HP yang cepet lowbat 🔋 Aku bakal charge terus rasa sayangku buat kamu.</div>
+            </div>
+            
+            <!-- Halaman penutup -->
+            <div class="page" id="page-8">
+                <img src="img/foto9.jpg" alt="Foto Kita" class="page-photo">
+                <div class="hearts">♥ ♥ ♥</div>
+                <div class="page-text">Makasih ya udah mau nerima aku apa adanya. Aku sayang banget sama kamu!</div>
+                <div class="signature">Dari pacarmu yang kadang cupu tapi selalu cinta ❤️</div>
+            </div>
+            
+            <div class="nav-buttons" id="nav-buttons">
+                <button class="nav-btn" id="prev-btn" disabled><i class="fas fa-arrow-left"></i></button>
+                <button class="nav-btn" id="next-btn"><i class="fas fa-arrow-right"></i></button>
+            </div>
+            <div class="page-indicator" id="page-indicator">1/9</div>
+        </div>
+        
+        <div class="music-control" id="music-control">
+            <i class="fas fa-music"></i>
+        </div>
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const letter = document.getElementById('letter');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const pageIndicator = document.getElementById('page-indicator');
+        const musicControl = document.getElementById('music-control');
+        const pages = document.querySelectorAll('.page');
+        const container = document.querySelector('.container');
+        
+        // Audio element
+        const bgMusic = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+        bgMusic.loop = true;
+        let isMusicPlaying = false;
+        
+        // Inisialisasi halaman
+        let currentPage = 0;
+        const totalPages = pages.length;
+        
+        // Fungsi untuk membuat animasi love
+        function createHearts() {
+            const heart = document.createElement('div');
+            heart.classList.add('love');
+            heart.innerHTML = '♥';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            container.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+        
+        // Fungsi untuk update halaman
+        function updatePage() {
+            // Sembunyikan semua halaman
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Tampilkan halaman saat ini
+            pages[currentPage].classList.add('active');
+            
+            // Update tombol navigasi
+            prevBtn.disabled = currentPage === 0;
+            nextBtn.disabled = currentPage === totalPages - 1;
+            
+            // Update page indicator
+            pageIndicator.textContent = `${currentPage + 1}/${totalPages}`;
+        }
+        
+        // Event listeners untuk navigasi
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                updatePage();
+            }
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 0) {
+                currentPage--;
+                updatePage();
+            }
+        });
+        
+        // Music control
+        musicControl.addEventListener('click', () => {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicControl.innerHTML = '<i class="fas fa-music"></i>';
+            } else {
+                bgMusic.play();
+                musicControl.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        });
+        
+        envelope.addEventListener('click', function() {
+            // Buka amplop
+            this.classList.add('open');
+            
+            // Tampilkan animasi love
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createHearts();
+                }, i * 100);
+            }
+            
+            // Tampilkan surat setelah 0.5 detik
+            setTimeout(() => {
+                letter.classList.add('show');
+                
+                // Mulai musik
+                setTimeout(() => {
+                    musicControl.classList.add('active');
+                    bgMusic.play();
+                    isMusicPlaying = true;
+                    musicControl.innerHTML = '<i class="fas fa-pause"></i>';
+                }, 1000);
+                
+                // Tampilkan halaman pertama
+                updatePage();
+                
+            }, 500);
+        });
+        
+        // Navigasi dengan keyboard
+        document.addEventListener('keydown', (e) => {
+            if (!letter.classList.contains('show')) return;
+            
+            if (e.key === 'ArrowRight') {
+                nextBtn.click();
+            } else if (e.key === 'ArrowLeft') {
+                prevBtn.click();
+            }
+        });
+
+        // Handle error gambar
+        document.querySelectorAll('.page-photo').forEach(photo => {
+            photo.onerror = function() {
+                this.src = "img/default.jpg"; // Fallback image jika gambar tidak ditemukan
+                console.error("Gambar tidak ditemukan: ", this.src);
+            };
+        });
+    </script>
+</body>
+</html>
